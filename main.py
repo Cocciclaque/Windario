@@ -4,13 +4,19 @@ import win32con
 import win32gui
 import Scripts.SettingsAndLevelParser as SettingsAndLevelParser
 import Scripts.levelRenderer as levelRenderer
+import Scripts.windowrelative as CustomRenderWindow
 
 pygame.init()
 
 config = SettingsAndLevelParser.Config(r"Data\config.dat", r"Data\elementAlias.dat")
-screen = pygame.display.set_mode((int(config.config["screen_X"]), int(config.config["screen_Y"]))) # For borderless, use pygame.NOFRAME
+screen = pygame.display.set_mode((0, 0), pygame.NOFRAME) # For borderless, use pygame.NOFRAME
+# pygame.display.toggle_fullscreen()
+
+
+pygame.display.toggle_fullscreen()
+
 done = False
-transparent = (255, 0, 128)  # Transparency color
+transparent = (255, 0, 128)# Transparency color
 dark_red = (139, 0, 0)
 
 
@@ -20,7 +26,8 @@ LevelDisplay = levelRenderer.LevelRenderer(screen,
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]), 
                                            level, config.alias)
 
-
+window = CustomRenderWindow.WindowRelative((500, 0), (200, 200), LevelDisplay, screen)
+window2 = CustomRenderWindow.WindowRelative((200, 000), (300, 300), LevelDisplay, screen)
 
 
 
@@ -38,10 +45,30 @@ while not done:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 done = True
+            if event.key == pygame.K_q:
+                window.moveLeft()
+                window2.moveLeft()
+            if event.key == pygame.K_d:
+                window.moveRight()
+                window2.moveRight()
+            if event.key == pygame.K_z:
+                window.moveUp()
+                window2.moveUp()
+            if event.key == pygame.K_s:
+                window.moveDown()
+                window2.moveDown()
 
 
     screen.fill(transparent) 
-    LevelDisplay.renderGround()
-    pygame.draw.rect(screen, pygame.color.Color(255, 0, 0), ((50, 50, 50, 50)))
+    window.fill("lightblue")
+    window2.fill("darkblue")
+    window.drawWindow()
+    window2.drawWindow()
 
-    pygame.display.update()
+
+
+    # LevelDisplay.renderGround()
+
+
+
+    pygame.display.flip()
