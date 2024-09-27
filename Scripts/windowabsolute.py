@@ -1,7 +1,7 @@
 import pygame 
 import Scripts.levelRenderer as levelRenderer
 
-class WindowRelative:
+class WindowAbsolute:
 
     def __init__(self, position:tuple[int, int], dimension:tuple[int, int], level:levelRenderer.LevelRenderer, screen:pygame.Surface, offset:tuple[int, int]= (0, 0)):
         self.posX = position[0]
@@ -24,12 +24,12 @@ class WindowRelative:
 
     def drawWindow(self):
         self.renderer.screen = self.surface
-        self.renderer.renderGroundWindowRelative(self.offX, self.offY)
+        self.renderer.renderGroundWindowAbsolute(self.offX, self.offY)
 
     def fill(self, color):
         self.surface.fill(color)
 
-    def setWindowPos(self, posX, posY):
+    def goto(self, posX, posY):
         self.posX = posX
         self.posY = posY
 
@@ -37,9 +37,6 @@ class WindowRelative:
     def moveLeft(self):
         self.offX -= 10
         self.posX -= 10
-        if self.posX < 0:
-            self.posX += 10
-            self.offX += 10
         self.surface = self.screen.subsurface((self.posX, self.posY, self.dX, self.dY))
 
     def moveRight(self):

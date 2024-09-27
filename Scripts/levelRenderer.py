@@ -26,7 +26,7 @@ class LevelRenderer:
                     self.screen.blit(sprite, (X*self.tilesize, Y*self.tilesize))
 
 
-    def renderGroundWindow(self, offsetX, offsetY):
+    def renderGroundWindowRelative(self, offsetX, offsetY):
         
         for X in range(len(self.level[0])):
             for Y in range(len(self.level)):
@@ -36,5 +36,16 @@ class LevelRenderer:
                     spriteblit = pygame.transform.scale(sprite, (self.tilesize, self.tilesize))
                     
                     self.screen.blit(spriteblit, ((X*self.tilesize)-offsetX, (Y*self.tilesize)-offsetY))
+
+    def renderGroundWindowAbsolute(self):
+        
+        for X in range(len(self.level[0])):
+            for Y in range(len(self.level)):
+                if self.level[Y][X] != "0":
+                    sprite = pygame.image.load(self.alias[self.level[Y][X]]).convert_alpha()
+
+                    spriteblit = pygame.transform.scale(sprite, (self.tilesize, self.tilesize))
+                    
+                    self.screen.blit(spriteblit, ((X*self.tilesize), (Y*self.tilesize)))
 
 

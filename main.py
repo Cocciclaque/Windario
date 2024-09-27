@@ -4,9 +4,16 @@ import win32con
 import win32gui
 import Scripts.SettingsAndLevelParser as SettingsAndLevelParser
 import Scripts.levelRenderer as levelRenderer
-import Scripts.windowrelative as CustomRenderWindow
+import Scripts.windowrelative as CustomRenderWindowRelative
+import Scripts.windowabsolute as CustomRenderWindowAbsolute
+import Scripts.player as PlayerCharacter
 
 pygame.init()
+
+clock = pygame.time.Clock()
+FPS = 60
+clock.tick(FPS)
+dt = 0
 
 config = SettingsAndLevelParser.Config(r"Data\config.dat", r"Data\elementAlias.dat")
 screen = pygame.display.set_mode((0, 0), pygame.NOFRAME) # For borderless, use pygame.NOFRAME
@@ -21,15 +28,21 @@ dark_red = (139, 0, 0)
 
 
 level = SettingsAndLevelParser.Level(r"Levels\level1.dat").map
+level2 = SettingsAndLevelParser.Level(r"Levels\level2.dat").map
 LevelDisplay = levelRenderer.LevelRenderer(screen, 
                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]), 
                                            level, config.alias)
 
-window = CustomRenderWindow.WindowRelative((500, 0), (200, 200), LevelDisplay, screen)
-window2 = CustomRenderWindow.WindowRelative((200, 000), (300, 300), LevelDisplay, screen)
+LevelDisplay2 = levelRenderer.LevelRenderer(screen,
+                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
+                                           int(config.config["screen_X"]), int(config.config["screen_Y"]),
+                                           level2, config.alias)
 
+window = CustomRenderWindowRelative.WindowRelative((500, 0), (200, 200), LevelDisplay, screen)
+window2 = CustomRenderWindowRelative.WindowRelative((700, 0), (300, 200), LevelDisplay2, screen)
 
+player = PlayerCharacter.Player(screen, 200, 500, float(config.config["gravity"]), 10, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
 
 # Create layered window
 hwnd = pygame.display.get_wm_info()["window"]
@@ -38,37 +51,51 @@ win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE,
 # Set window transparency color
 win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(*transparent), 0, win32con.LWA_COLORKEY)
 
+def DoPlayerMovementAndKeys(keys):
+    global done
+    if keys["left"]:
+        player.x -= player.speed * dt
+    if keys["right"]:
+        player.x += player.speed * dt
+    if keys["exit"]:
+        done = True
+
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                done = True
-            if event.key == pygame.K_q:
-                window.moveLeft()
-                window2.moveLeft()
-            if event.key == pygame.K_d:
-                window.moveRight()
-                window2.moveRight()
-            if event.key == pygame.K_z:
-                window.moveUp()
-                window2.moveUp()
-            if event.key == pygame.K_s:
-                window.moveDown()
-                window2.moveDown()
+            pass
+            # if event.key == pygame.K_ESCAPE:
+            #     done = True
+            # if event.key == pygame.K_q:
+            #     window.moveLeft()
+            #     window2.moveLeft()
+            # if event.key == pygame.K_d:
+            #     window.moveRight()
+            #     window2.moveRight()
+            # if event.key == pygame.K_z:
+            #     window.moveUp()
+            #     window2.moveUp()
+            # if event.key == pygame.K_s:
+            #     window.moveDown()
+            #     window2.moveDown()
 
 
-    screen.fill(transparent) 
-    window.fill("lightblue")
-    window2.fill("darkblue")
-    window.drawWindow()
-    window2.drawWindow()
+    screen.fill(transparent)
+    player.idleAnimation()  
+
+    # window.fill("lightblue")
+    # window2.fill("darkblue")
+    # window.drawWindow()
+    LevelDisplay.renderGround()
+    # window2.drawWindow()
+
+    DoPlayerMovementAndKeys(player.keys(dt))
 
 
 
-    # LevelDisplay.renderGround()
 
 
-
+    dt = clock.tick(FPS)/1000
     pygame.display.flip()

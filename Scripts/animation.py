@@ -1,0 +1,66 @@
+import pygame
+import os
+
+class Animation:
+
+    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int]):
+        self.screen = screen
+        self.spriteDir = spriteDir
+        self.value = 0
+
+        self.frame_duration = frameDuration
+        self.frame_time = 0
+
+        self.fps = fps
+
+
+        self.clock = clock
+
+        self.x = x
+        self.y = y
+
+        self.size_X = size[0]
+        self.size_Y = size[1]
+
+        self.currentSprite = pygame.image.load(self.spriteDir+r"\\"+os.listdir(self.spriteDir)[0])
+        self.currentSprite = pygame.transform.scale(self.currentSprite, (self.size_X, self.size_Y))
+
+        self.active = True
+
+    def toggleActive(self):
+        self.active = (self.active == False)
+        self.currentSprite = pygame.transform.scale(pygame.image.load(self.spriteDir+r"\\"+os.listdir(self.spriteDir)[0]), (self.size_X, self.size_Y))
+
+
+    def animate(self):
+        if self.frame_time>self.frame_duration:
+            
+            self.frame_time = 0
+
+
+            spritesAddress = []
+            for elt in os.listdir(self.spriteDir):
+                spritesAddress.append(self.spriteDir +r"\\" + elt)
+
+            sprites = []
+
+            for elt in spritesAddress:
+                sprites.append(pygame.transform.scale(pygame.image.load(elt).convert_alpha(), (self.size_X, self.size_Y)))
+
+
+            if self.value >= len(sprites):
+                self.value = 0
+            
+            self.currentSprite = sprites[self.value]
+
+            self.value += 1
+        
+        if self.active == True:
+            self.screen.blit(self.currentSprite, (self.x, self.y))
+            self.tick()
+
+    def tick(self):
+        dt = self.clock.tick(self.fps)/1000
+        self.frame_time += dt
+
+
