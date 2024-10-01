@@ -7,6 +7,7 @@ import Scripts.levelRenderer as levelRenderer
 import Scripts.windowrelative as CustomRenderWindowRelative
 import Scripts.windowabsolute as CustomRenderWindowAbsolute
 import Scripts.player as PlayerCharacter
+import Scripts.animation as Animation
 
 pygame.init()
 
@@ -43,6 +44,8 @@ window = CustomRenderWindowRelative.WindowRelative((500, 0), (200, 200), LevelDi
 window2 = CustomRenderWindowRelative.WindowRelative((700, 0), (300, 200), LevelDisplay2, screen)
 
 player = PlayerCharacter.Player(screen, 200, 500, float(config.config["gravity"]), 10, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
+
+animation = Animation.Animation(screen, r"Textures - copie", 200, 200, 0.15, clock, 60, (200, 200))
 
 # Create layered window
 hwnd = pygame.display.get_wm_info()["window"]
@@ -84,6 +87,7 @@ while not done:
 
     screen.fill(transparent)
     player.idleAnimation()  
+    animation.animate()
 
     # window.fill("lightblue")
     # window2.fill("darkblue")
@@ -97,5 +101,5 @@ while not done:
 
 
 
-    dt = clock.tick(FPS)/1000
+    dt = clock.tick(FPS)/1024
     pygame.display.flip()

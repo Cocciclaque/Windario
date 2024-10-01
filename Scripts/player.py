@@ -19,9 +19,21 @@ class Player:
 
         self.fps = fps
 
-        self.idle = Animation(self.screen, self.spriteDir+r"\idle", self.x, self.y, 0.125, self.clock, self.fps, (100, 100))
+        self.idle = Animation(self.screen, self.spriteDir+r"\idle", self.x, self.y, 0.125, self.clock, self.fps, (100, 100), True)
+        self.running = Animation(self.screen, self.spriteDir+r"running", self.x, self.y, 0.125, self.clock, self.fps, (100, 100), True)
+        self.rolling = Animation(self.screen, self.spriteDir+r"rolling", self.x, self.y, 0.125, self.clock, self.fps, (100, 100), False)
+        self.hit= Animation(self.screen, self.spriteDir+r"hit", self.x, self.y, 0.125, self.clock, self.fps, (100, 100), False)
+        self.death = Animation(self.screen, self.spriteDir+r"death", self.x, self.y, 0.125, self.clock, self.fps, (100, 100), False)
+        self.currentAnimation:Animation = self.idle
+
 
         self.vY = 0
+
+    def chooseAnimation(self, animation):
+        if animation == self.currentAnimation or (self.currentAnimation == "hit" and self.currentAnimation.finished == False):
+            pass
+        else:
+
 
     def update(self, deltaTime):
         self.addGravity(deltaTime)

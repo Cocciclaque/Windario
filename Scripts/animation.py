@@ -3,7 +3,7 @@ import os
 
 class Animation:
 
-    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int]):
+    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int], loop:bool):
         self.screen = screen
         self.spriteDir = spriteDir
         self.value = 0
@@ -26,6 +26,9 @@ class Animation:
         self.currentSprite = pygame.transform.scale(self.currentSprite, (self.size_X, self.size_Y))
 
         self.active = True
+        self.finished = False
+
+        self.loopable = loop
 
     def toggleActive(self):
         self.active = (self.active == False)
@@ -50,6 +53,9 @@ class Animation:
 
             if self.value >= len(sprites):
                 self.value = 0
+                
+                if self.loopable == False:
+                    self.finished = True
             
             self.currentSprite = sprites[self.value]
 
@@ -63,4 +69,6 @@ class Animation:
         dt = self.clock.tick(self.fps)/1000
         self.frame_time += dt
 
+    def __eq__(self, value: object) -> bool:
+        return self.spriteDir.split("//")[1]
 
