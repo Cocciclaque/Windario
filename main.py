@@ -8,7 +8,7 @@ import Scripts.windowrelative as CustomRenderWindowRelative
 import Scripts.windowabsolute as CustomRenderWindowAbsolute
 import Scripts.player as PlayerCharacter
 import Scripts.animation as Animation
-
+import time
 pygame.init()
 
 clock = pygame.time.Clock()
@@ -17,7 +17,7 @@ clock.tick(FPS)
 dt = 0
 
 config = SettingsAndLevelParser.Config(r"Data\config.dat", r"Data\elementAlias.dat")
-screen = pygame.display.set_mode((0, 0), pygame.NOFRAME) # For borderless, use pygame.NOFRAME
+screen = pygame.display.set_mode((0, 0), pygame.NOFRAME, display=0) # For borderless, use pygame.NOFRAME
 # pygame.display.toggle_fullscreen()
 
 
@@ -43,9 +43,7 @@ LevelDisplay2 = levelRenderer.LevelRenderer(screen,
 window = CustomRenderWindowRelative.WindowRelative((500, 0), (200, 200), LevelDisplay, screen)
 window2 = CustomRenderWindowRelative.WindowRelative((700, 0), (300, 200), LevelDisplay2, screen)
 
-player = PlayerCharacter.Player(screen, 200, 500, float(config.config["gravity"]), 10, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
-
-animation = Animation.Animation(screen, r"Textures - copie", 200, 200, 0.15, clock, 60, (200, 200))
+player = PlayerCharacter.Player(screen, 200, 500, float(config.config["gravity"]), 500, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
 
 # Create layered window
 hwnd = pygame.display.get_wm_info()["window"]
@@ -58,8 +56,22 @@ def DoPlayerMovementAndKeys(keys):
     global done
     if keys["left"]:
         player.x -= player.speed * dt
+        player.lookLeft()
+        player.notIdle()
+    if keys["left"] and player.currentAnimation != player.running:
+        player.chooseAnimation(player.running)
+        player.notIdle()
     if keys["right"]:
         player.x += player.speed * dt
+        player.lookRight()
+        player.notIdle()
+    if keys["right"] and player.currentAnimation != player.running:
+        player.chooseAnimation(player.running)
+        player.notIdle()
+    if keys["left"] == False and keys["right"] == False and player.currentAnimation == player.running:
+        player.Playidle()
+     
+
     if keys["exit"]:
         done = True
 
@@ -84,10 +96,8 @@ while not done:
             #     window.moveDown()
             #     window2.moveDown()
 
-
+    
     screen.fill(transparent)
-    player.idleAnimation()  
-    animation.animate()
 
     # window.fill("lightblue")
     # window2.fill("darkblue")
@@ -95,11 +105,15 @@ while not done:
     LevelDisplay.renderGround()
     # window2.drawWindow()
 
+    player.update(dt)
+    
+    
+    if player.currentAnimation != player.idle:
+        player.idle.animate()
+
+    player.idleAnimation()
+
     DoPlayerMovementAndKeys(player.keys(dt))
-
-
-
-
 
     dt = clock.tick(FPS)/1024
     pygame.display.flip()

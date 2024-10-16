@@ -3,7 +3,7 @@ import os
 
 class Animation:
 
-    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int], loop:bool):
+    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int], loop:bool, name="fill"):
         self.screen = screen
         self.spriteDir = spriteDir
         self.value = 0
@@ -13,11 +13,14 @@ class Animation:
 
         self.fps = fps
 
+        self.lookdir = 1
 
         self.clock = clock
 
         self.x = x
         self.y = y
+
+        self.name = name
 
         self.size_X = size[0]
         self.size_Y = size[1]
@@ -31,11 +34,11 @@ class Animation:
         self.loopable = loop
 
     def toggleActive(self):
-        self.active = (self.active == False)
-        self.currentSprite = pygame.transform.scale(pygame.image.load(self.spriteDir+r"\\"+os.listdir(self.spriteDir)[0]), (self.size_X, self.size_Y))
-
+        if self.active == False:
+            self.active = True
 
     def animate(self):
+        print("test")
         if self.frame_time>self.frame_duration:
             
             self.frame_time = 0
@@ -47,9 +50,13 @@ class Animation:
 
             sprites = []
 
-            for elt in spritesAddress:
-                sprites.append(pygame.transform.scale(pygame.image.load(elt).convert_alpha(), (self.size_X, self.size_Y)))
 
+            if self.lookdir == 1:
+                for elt in spritesAddress:
+                    sprites.append(pygame.transform.scale(pygame.image.load(elt).convert_alpha(), (self.size_X, self.size_Y)))
+            else:
+                for elt in spritesAddress:
+                    sprites.append(pygame.transform.flip(pygame.transform.scale(pygame.image.load(elt).convert_alpha(), (self.size_X, self.size_Y)), True, False))
 
             if self.value >= len(sprites):
                 self.value = 0
@@ -63,12 +70,10 @@ class Animation:
         
         if self.active == True:
             self.screen.blit(self.currentSprite, (self.x, self.y))
-            self.tick()
+        
+        self.tick()
 
     def tick(self):
         dt = self.clock.tick(self.fps)/1000
         self.frame_time += dt
-
-    def __eq__(self, value: object) -> bool:
-        return self.spriteDir.split("//")[1]
 
