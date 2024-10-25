@@ -3,7 +3,7 @@ import os
 
 class Animation:
 
-    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int], loop:bool, name="fill"):
+    def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int], loop:bool, name="fill", offsetPos:int=0, offsetSize:int=0):
         self.screen = screen
         self.spriteDir = spriteDir
         self.value = 0
@@ -17,6 +17,10 @@ class Animation:
 
         self.clock = clock
 
+        self.spriteOffsetPos = offsetPos
+        self.spriteOffsetSize = offsetSize
+
+
         self.x = x
         self.y = y
 
@@ -25,52 +29,39 @@ class Animation:
         self.size_X = size[0]
         self.size_Y = size[1]
 
-        self.currentSprite = pygame.image.load(self.spriteDir+r"\\"+os.listdir(self.spriteDir)[0])
-        self.currentSprite = pygame.transform.scale(self.currentSprite, (self.size_X, self.size_Y))
+        self.sprites = [pygame.transform.scale(pygame.image.load(self.spriteDir+r"\\"+elt).convert_alpha(), (self.size_X, self.size_Y)) for elt in os.listdir(self.spriteDir)]
+
+        self.firstSprite = 0
+        self.currentSprite = self.sprites[self.firstSprite]
 
         self.active = True
         self.finished = False
 
         self.loopable = loop
 
+    def resetAnimation(self):
+        self.currentSprite = self.sprites[self.firstSprite]
+        self.value = 0
+        self.frame_time = 0
+
     def toggleActive(self):
         if self.active == False:
             self.active = True
 
     def animate(self):
-        print("test")
         if self.frame_time>self.frame_duration:
-            
             self.frame_time = 0
-
-
-            spritesAddress = []
-            for elt in os.listdir(self.spriteDir):
-                spritesAddress.append(self.spriteDir +r"\\" + elt)
-
-            sprites = []
-
-
-            if self.lookdir == 1:
-                for elt in spritesAddress:
-                    sprites.append(pygame.transform.scale(pygame.image.load(elt).convert_alpha(), (self.size_X, self.size_Y)))
-            else:
-                for elt in spritesAddress:
-                    sprites.append(pygame.transform.flip(pygame.transform.scale(pygame.image.load(elt).convert_alpha(), (self.size_X, self.size_Y)), True, False))
-
-            if self.value >= len(sprites):
-                self.value = 0
-                
-                if self.loopable == False:
-                    self.finished = True
-            
-            self.currentSprite = sprites[self.value]
-
             self.value += 1
+            if self.value == len(self.sprites):
+                self.value = 0
         
         if self.active == True:
-            self.screen.blit(self.currentSprite, (self.x, self.y))
+            if self.lookdir == -1:
+                self.currentSprite = pygame.transform.flip(self.currentSprite, True, False)
+            self.screen.blit(self.currentSprite, (self.x, self.y), (self.spriteOffsetPos, self.spriteOffsetPos, self.spriteOffsetSize, self.spriteOffsetSize))
         
+            self.currentSprite = self.sprites[self.firstSprite + self.value]
+            
         self.tick()
 
     def tick(self):

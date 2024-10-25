@@ -30,20 +30,24 @@ dark_red = (139, 0, 0)
 
 level = SettingsAndLevelParser.Level(r"Levels\level1.dat").map
 level2 = SettingsAndLevelParser.Level(r"Levels\level2.dat").map
-LevelDisplay = levelRenderer.LevelRenderer(screen, 
+LevelDisplay = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]), 
                                            level, config.alias)
 
-LevelDisplay2 = levelRenderer.LevelRenderer(screen,
+LevelDisplay2 = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
                                             int(config.config["size_X"]), int(config.config["size_Y"]), 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]),
                                            level2, config.alias)
 
-window = CustomRenderWindowRelative.WindowRelative((500, 0), (200, 200), LevelDisplay, screen)
-window2 = CustomRenderWindowRelative.WindowRelative((700, 0), (300, 200), LevelDisplay2, screen)
+window = CustomRenderWindowRelative.WindowRelative((10, 6), (4, 4), int(config.config["tilesize"]), LevelDisplay, screen)
+window2 = CustomRenderWindowRelative.WindowRelative((8, 6), (8, 6), int(config.config["tilesize"]), LevelDisplay2, screen)
 
-player = PlayerCharacter.Player(screen, 200, 500, float(config.config["gravity"]), 500, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
+player = PlayerCharacter.Player(screen, int(config.config["tilesize"]), 200, 500, float(config.config["gravity"]), 500, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
+
+windows = [window, window2]
+
+rectCollisionList = []
 
 # Create layered window
 hwnd = pygame.display.get_wm_info()["window"]
@@ -54,23 +58,75 @@ win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(*transparent), 0, win32co
 
 def DoPlayerMovementAndKeys(keys):
     global done
-    if keys["left"]:
+    anim = player.currentAnimation
+    if keys["left"] and player.grounded == True:
         player.x -= player.speed * dt
         player.lookLeft()
-        player.notIdle()
-    if keys["left"] and player.currentAnimation != player.running:
-        player.chooseAnimation(player.running)
-        player.notIdle()
-    if keys["right"]:
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.currentAnimation = player.running
+    if keys["left"] and player.grounded == False:
+        player.x -= player.speed * dt
+        player.lookLeft()
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.currentAnimation = player.falling
+    if keys["right"] and player.grounded == True:
         player.x += player.speed * dt
         player.lookRight()
-        player.notIdle()
-    if keys["right"] and player.currentAnimation != player.running:
-        player.chooseAnimation(player.running)
-        player.notIdle()
-    if keys["left"] == False and keys["right"] == False and player.currentAnimation == player.running:
-        player.Playidle()
-     
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.currentAnimation = player.running
+    if keys["right"] and player.grounded == False:
+        player.x += player.speed * dt
+        player.lookRight()
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.currentAnimation = player.falling
+
+    if keys["right"] == False and keys["left"] == False and player.grounded == True:
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.idle.lookdir = player.currentAnimation.lookdir
+        player.currentAnimation = player.idle
+    
+    if keys["right"] == False and keys["left"] == False and player.grounded == False and player.currentAnimation != player.falling:
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.falling.lookdir = player.currentAnimation.lookdir
+        player.currentAnimation = player.falling
+
+    if keys["jump"] == True and player.grounded == True:
+        player.jump(dt)
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.falling.lookdir = player.currentAnimation.lookdir
+        player.currentAnimation = player.falling
+        player.currentAnimation.resetAnimation()
+    
+    if keys["right"] == True and keys["left"] == True and player.grounded == True:
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.idle.lookdir = player.currentAnimation.lookdir
+        player.currentAnimation = player.idle
+    
+    if keys["right"] == True and keys["left"] == True and player.grounded == False:
+        for elt in player.animations:
+            elt.x = player.x
+            elt.y = player.y
+        player.falling.lookdir = player.currentAnimation.lookdir
+        player.currentAnimation = player.falling
+
+    if anim != player.currentAnimation:
+        player.currentAnimation.resetAnimation()
 
     if keys["exit"]:
         done = True
@@ -96,20 +152,20 @@ while not done:
             #     window.moveDown()
             #     window2.moveDown()
 
+    collisions = []
+
     
     screen.fill(transparent)
 
     # window.fill("lightblue")
-    # window2.fill("darkblue")
+    window2.fill("darkblue")
     # window.drawWindow()
     LevelDisplay.renderGround()
-    # window2.drawWindow()
+    window2.drawWindow()
 
-    player.update(dt)
-    
-    
-    if player.currentAnimation != player.idle:
-        player.idle.animate()
+    collisions += LevelDisplay.collisions + window2.collisions
+
+    player.update(dt, collisions)
 
     player.idleAnimation()
 
