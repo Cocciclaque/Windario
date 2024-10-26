@@ -1,7 +1,8 @@
 import pygame
+import Scripts.animation as animation
 class LevelRenderer:
 
-    def __init__(self, screen:pygame.display, tilesize:int, size_X:int, size_Y:int, dimension_X:int, dimension_Y:int, level:list[list[int]], alias:list[str]):
+    def __init__(self, screen:pygame.display, tilesize:int, size_X:int, size_Y:int, dimension_X:int, dimension_Y:int, level:list[list[int]], alias:list[str], finishdir:str):
         self.screen = screen
         self.size_X = size_X
         self.size_Y = size_Y
@@ -10,6 +11,13 @@ class LevelRenderer:
         self.level = level
 
         self.alias = alias
+
+        self.endX = 0
+        self.endY = 0
+
+        self.finishdir = finishdir
+        self.finish:animation.Animation = 0
+
 
         self.tilesize = tilesize
 
@@ -20,6 +28,9 @@ class LevelRenderer:
 
         self.collisions = []
 
+    def renderFinish(self):
+        self.finish.animate()
+
     def renderGround(self):
 
         collisions = []
@@ -28,10 +39,13 @@ class LevelRenderer:
             for Y in range(len(self.level)):
                 if self.level[Y][X] != "0":
 
-                    collisions.append(pygame.Rect(X*self.tilesize, Y*self.tilesize, self.tilesize, self.tilesize))
-
-                    sprite = pygame.transform.scale(pygame.image.load(self.alias[self.level[Y][X]]).convert_alpha(), (self.tilesize, self.tilesize))
-                    self.screen.blit(sprite, (X*self.tilesize, Y*self.tilesize))
+                    if self.level[Y][X] not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                        collisions.append(pygame.Rect(X*self.tilesize, Y*self.tilesize, self.tilesize, self.tilesize))
+                    else:
+                        collisions.append(pygame.Rect(X*self.tilesize, Y*self.tilesize, self.tilesize, self.tilesize/2))
+                    if self.level[Y][X] != "%":
+                        sprite = pygame.transform.scale(pygame.image.load(self.alias[self.level[Y][X]]).convert_alpha(), (self.tilesize, self.tilesize))
+                        self.screen.blit(sprite, (X*self.tilesize, Y*self.tilesize))
         
         self.collisions = collisions
 

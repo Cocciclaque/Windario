@@ -3,10 +3,12 @@ from Scripts.animation import Animation
 import time
 class Player:
 
-    def __init__(self, screen:pygame.display, tilesize:int, pos_X:int, pos_Y:int, gravity:float, speed:int, controls:str, spriteDir:str, clock:pygame.time.Clock, fps:int):
+    def __init__(self, screen:pygame.display, tilesize:int, pos_X:int, pos_Y:int, gravity:float, speed:int, jumpforce:float, controls:str, spriteDir:str, clock:pygame.time.Clock, fps:int):
         self.x = pos_X
         self.y = pos_Y
         
+        self.jumpForce = jumpforce
+
         self.tilesize = tilesize
 
         self.tileX = round(self.x/self.tilesize)
@@ -25,6 +27,8 @@ class Player:
 
         self.fps = fps
 
+        self.beatLevel = False
+
         self.grounded = False
 
         self.idle = Animation(self.screen, self.spriteDir+"\\"+r"\idle", self.x, self.y, 0.15, self.clock, self.fps, (100, 100), True, "idle", 25, 75)
@@ -42,7 +46,6 @@ class Player:
     def chooseAnimation(self, animation):
         # if animation == self.currentAnimation or (self.currentAnimation == "hit" and self.currentAnimation.finished == False):
         #     pass
-        print("test")
         self.currentAnimation = animation
             
     def lookLeft(self):
@@ -55,7 +58,7 @@ class Player:
 
     
     def doCollisions(self, collisions):
-        thing_to_test = pygame.Rect(self.x, self.y+10, 35, 55).collidelistall(collisions)
+        thing_to_test = pygame.Rect(self.x+11, self.y+10, 27, 55).collidelistall(collisions)
         if thing_to_test != []:
             return (True, thing_to_test)
         return (False, 0)
@@ -65,17 +68,17 @@ class Player:
             self.addGravity(deltaTime)
             self.grounded = False
             col = self.doCollisions(collisions)
-            print(self.vY)
             if col[0] and self.vY >= 0:
                 self.y = collisions[col[1][0]].y - 60
                 self.vY = 0
                 self.grounded = True
             if col[0] and self.vY < 0:
-                self.vY = 0
-                self.addGravity(deltaTime)
+                self.vY = 4
+                self.y += 5
+                self.addGravity(deltaTime) 
     
     def jump(self, deltaTime):
-        self.vY -= self.g
+        self.vY -= self.g * deltaTime * self.jumpForce
         self.addGravity(deltaTime)
 
     def addGravity(self, deltaTime):
@@ -138,6 +141,11 @@ class Player:
             keysToReturn["exit"] = True
         else:
             keysToReturn["exit"] = False
+
+        if pressed_keys[int(self.controls["switch"])]:
+            keysToReturn["switch"] = True
+        else:
+            keysToReturn["switch"] = False
 
         return keysToReturn
 

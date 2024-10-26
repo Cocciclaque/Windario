@@ -49,11 +49,15 @@ class Animation:
             self.active = True
 
     def animate(self):
+            
         if self.frame_time>self.frame_duration:
             self.frame_time = 0
             self.value += 1
-            if self.value == len(self.sprites):
+            if self.value == len(self.sprites) and self.loopable == True:
                 self.value = 0
+            elif self.value == len(self.sprites) and self.loopable == False:
+                self.value = len(self.sprites)-1
+                self.finished = True
         
         if self.active == True:
             if self.lookdir == -1:
@@ -62,7 +66,8 @@ class Animation:
         
             self.currentSprite = self.sprites[self.firstSprite + self.value]
             
-        self.tick()
+        if self.spriteDir != r"Textures\TextureData\coin":
+            self.tick()
 
     def tick(self):
         dt = self.clock.tick(self.fps)/1000
