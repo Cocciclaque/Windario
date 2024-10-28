@@ -25,8 +25,8 @@ class Level:
         self.clock:pygame.time.Clock = clock
 
         self.renderer:levelRenderer.LevelRenderer = renderer
-        self.renderer.endX:int = self.endX
-        self.renderer.endY:int = self.endY
+        self.renderer.endX = self.endX
+        self.renderer.endY = self.endY
 
         self.enemies:list[enemy.Enemy] = [] 
 
@@ -37,6 +37,8 @@ class Level:
         self.naw:int = self.startingnrw
         self.nrw:int = self.startingnaw
     
+        self.displayNumWindows:bool = True
+
         self.font:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 24)
         self.textFont:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 18)
 
@@ -54,8 +56,9 @@ class Level:
             self.screen.blit(self.text[i], (self.textPos[i][0], self.textPos[i][1]))
 
     def renderWinNumber(self):
-        win_abs  = self.font.render(f"Nombre de copié collés restants : {self.naw}.", True, (255, 255, 255))
-        self.screen.blit(win_abs, (100, 100))
+        if self.displayNumWindows:
+            win_abs  = self.font.render(f"Nombre de copié collés restants : {self.naw}.", True, (255, 255, 255))
+            self.screen.blit(win_abs, (100, 100))
 
     def addEnemy(self, x:int, y:int, speed:int, pathLength:int):
         self.enemies.append(enemy.Enemy(self.screen, x, y, speed, pathLength, self.clock, self.fps))

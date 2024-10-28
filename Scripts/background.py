@@ -18,11 +18,11 @@ class Background():
 
         self.cloudsImages:list[str] = ["\\".join([self.path, elt]) for elt in os.listdir(self.path)]
 
-        self.fillClouds(random.randint(10, 15))
+        self.fillClouds(random.randint(25, 30))
 
     def fillClouds(self, number:int):
         for i in range(number):
-            self.clouds.append(clouds.Cloud(self.generateCloud(), random.randint(0, self.sizeX), random.randint(0, round(self.sizeY/4)), random.randint(4, 6), self.sizeX+100))
+            self.clouds.append(clouds.Cloud(self.generateCloud(), random.randint(-200, self.sizeX), random.randint(0, round(self.sizeY/4)), random.randint(4, 6), self.sizeX+100))
 
     def generateCloud(self):
         return self.cloudsImages[random.randint(0, len(self.cloudsImages)-1)]

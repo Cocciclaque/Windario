@@ -22,7 +22,8 @@ Aucune librairie (à part pygame) n'est à installer, tout a été développé �
 
 <p> Arrivé sur le menu, simplement sélectionner "Play game" pour lancer le premier niveau. <hr>
 Le joueur peut se déplacer en utilisant Q et D pour aller respectivement de gauche à droite, et la barre espace pour sauter. <br>
-Le but du jeu est simplement d'atteindre le drapeau à chaque niveau.</p>
+Le but du jeu est simplement d'atteindre le drapeau à chaque niveau. <br>
+Le joueur peut recommencer le niveau s'il fait une erreur en appuyant sur "a". </p>
 
 ##### Mécanique spéciale :
 <p> On remarque en partie un texture indiquant un nombre de "copié collé" disponible. <br>

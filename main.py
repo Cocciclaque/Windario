@@ -46,9 +46,13 @@ player:PlayerCharacter.Player = PlayerCharacter.Player(screen, int(config.config
 
 windows:list[CustomRenderWindowAbsolute.WindowAbsolute] = []
 
-levelZero:CustomLevel.Level = CustomLevel.Level(screen, level1, (4, 12), (17, 13), 10, 10, LevelDisplay, clock, config, FPS)
-levelOne:CustomLevel.Level = CustomLevel.Level(screen, level1, (4, 12), (17, 13), 1, 1, LevelDisplay, clock, config, FPS)
-levelTwo:CustomLevel.Level = CustomLevel.Level(screen, level2, (4, 12), (10, 12), 1, 1, LevelDisplay2, clock, config, FPS)
+levelZero:CustomLevel.Level = CustomLevel.Level(screen, level1, (4, 12), (17, 13), 0, 0, LevelDisplay, clock, config, FPS)
+levelZero.displayNumWindows = False
+levelZero.addText(100, 50, "Bienvenue sur Windario !")
+levelOne:CustomLevel.Level = CustomLevel.Level(screen, level1, (4, 12), (17, 13), 0, 0, LevelDisplay, clock, config, FPS)
+levelOne.displayNumWindows = False
+levelOne.addText(100, 50, "les ennemis sont très dangereux, esquivez-les !")
+levelTwo:CustomLevel.Level = CustomLevel.Level(screen, level2, (4, 12), (17, 13), 1, 1, LevelDisplay2, clock, config, FPS)
 
 levels:list[CustomLevel.Level] = [levelZero, levelOne, levelTwo]
 
@@ -140,6 +144,13 @@ def DoPlayerMovementAndKeys(keys):
 
     if anim != player.currentAnimation:
         player.currentAnimation.resetAnimation()
+
+    if keys["reset"]:
+        restart()
+        levels[activeLevel].reload()
+        player.x = levels[activeLevel].startX*tilesize
+        player.y = levels[activeLevel].startY*tilesize
+        player.vY = 0
 
     if keys["exit"]:
         done = True
@@ -257,6 +268,8 @@ def menu():
         pygame.display.flip()
             
 def restart():
+    global windows
+    windows = []
     restartDone:bool = False
     font:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
     win_abs:pygame.Surface = font.render("You died !", True, (255, 255, 255))
@@ -404,6 +417,13 @@ while not done:
             col = elt.collisions
             collisions += [alt for alt in col if alt not in collisions]
         levels[activeLevel].render()
+
+        if(player.y) >= height:
+            restart()
+            levels[activeLevel].reload()
+            player.x = levels[activeLevel].startX*tilesize
+            player.y = levels[activeLevel].startY*tilesize
+            player.vY = 0
 
         if(player.doCollisions([pygame.Rect(levels[activeLevel].endX*tilesize-10, levels[activeLevel].endY*tilesize, tilesize+20, tilesize)])[1]) != 0:
             nextLevel()

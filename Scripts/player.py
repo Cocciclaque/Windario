@@ -147,6 +147,11 @@ class Player:
             keysToReturn["copy"] = True
         else:
             keysToReturn["copy"] = False
+        
+        if pressed_keys[int(self.controls["reset"])]:
+            keysToReturn["reset"] = True
+        else:
+            keysToReturn["reset"] = False
 
         return keysToReturn
 
