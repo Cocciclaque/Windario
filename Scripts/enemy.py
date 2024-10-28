@@ -3,21 +3,21 @@ import Scripts.animation as animation
 class Enemy:
     
     def __init__(self, screen:pygame.Surface, x:int, y:int, speed:int, pathLength:int, clock:pygame.time.Clock, fps:int=60):
-        self.screen = screen
+        self.screen:pygame.Surface = screen
         
-        self.x = x
-        self.y = y
+        self.x:int = x
+        self.y:int = y
         
-        self.pathLength = pathLength
-        self.hasMoved = 0
+        self.pathLength:int = pathLength
+        self.hasMoved:int = 0
 
-        self.lookdir = 1
+        self.lookdir:int = 1
 
-        self.clock = clock
+        self.clock:pygame.time.Clock = clock
 
-        self.animation = animation.Animation(self.screen, r"Textures\TextureData\slime_purple", self.x, self.y, 0.025, None, None, (100, 100), True, "slime", 25, 75)
+        self.animation:animation.Animation = animation.Animation(self.screen, r"Textures\TextureData\slime_purple", self.x, self.y, 0.025, None, None, (100, 100), True, "slime", 25, 75)
 
-        self.speed = speed
+        self.speed:int = speed
 
     def update(self):
         self.x += self.speed * self.lookdir

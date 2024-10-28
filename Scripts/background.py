@@ -6,17 +6,17 @@ class Background():
     
     def __init__(self, screen:pygame.Surface, color:pygame.Color, path:str, size:tuple[int, int]):
 
-        self.path = path
+        self.path:str = path
 
-        self.sizeX = size[0]
-        self.sizeY = size[1]
+        self.sizeX:int = size[0]
+        self.sizeY:int = size[1]
 
         self.clouds:list[clouds.Cloud] = []
-        self.color = color
+        self.color:pygame.Color = color
     
-        self.screen = screen
+        self.screen:pygame.Surface = screen
 
-        self.cloudsImages = ["\\".join([self.path, elt]) for elt in os.listdir(self.path)]
+        self.cloudsImages:list[str] = ["\\".join([self.path, elt]) for elt in os.listdir(self.path)]
 
         self.fillClouds(random.randint(10, 15))
 

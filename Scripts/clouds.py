@@ -2,14 +2,14 @@ import pygame
 class Cloud:
     
     def __init__(self, imagePath:str, x:int, y:int, speed:int, loopX:int):
-        self.imagePath = imagePath
-        self.image = pygame.image.load(imagePath)
+        self.imagePath:str = imagePath
+        self.image:pygame.Surface = pygame.image.load(imagePath)
         
-        self.loopX = loopX
+        self.loopX:int = loopX
 
-        self.x = x
-        self.y = y
-        self.speed = speed
+        self.x:int = x
+        self.y:int = y
+        self.speed:int = speed
 
 
     

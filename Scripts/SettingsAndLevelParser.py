@@ -1,13 +1,13 @@
 class Config:
 
-    def __init__(self, configFileName, aliasFileName):
-        self.config = self.parseConfig(configFileName)
-        self.alias = self.parseElementAlias(aliasFileName)
+    def __init__(self, configFileName:str, aliasFileName:str):
+        self.config:dict = self.parseConfig(configFileName)
+        self.alias:dict = self.parseElementAlias(aliasFileName)
 
     def parseConfig(self, configFileName):
         f = open((configFileName), "r")
     
-        params = {}
+        params:dict = {}
 
         for line in f.readlines():
             if line != "":
@@ -28,8 +28,8 @@ class Config:
 
 class Level:
 
-    def __init__(self, levelFileName):
-        self.map = self.parseLevel(levelFileName)
+    def __init__(self, levelFileName:str):
+        self.map:str = self.parseLevel(levelFileName)
 
     def parseLevel(self, levelFileName):
         f = open((levelFileName), "r")

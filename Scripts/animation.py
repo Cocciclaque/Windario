@@ -4,40 +4,40 @@ import os
 class Animation:
 
     def __init__(self, screen:pygame.Surface, spriteDir:str, x:int, y:int, frameDuration:float, clock:pygame.time.Clock, fps:int, size:tuple[int, int], loop:bool, name="fill", offsetPos:int=0, offsetSize:int=0):
-        self.screen = screen
-        self.spriteDir = spriteDir
-        self.value = 0
+        self.screen:pygame.Surface = screen
+        self.spriteDir:str = spriteDir
+        self.value:int = 0
 
-        self.frame_duration = frameDuration
-        self.frame_time = 0
+        self.frame_duration:float = frameDuration
+        self.frame_time:float = 0
 
-        self.fps = fps
+        self.fps:int = fps
 
-        self.lookdir = 1
+        self.lookdir:int = 1
 
-        self.clock = clock
+        self.clock:pygame.time.Clock = clock
 
-        self.spriteOffsetPos = offsetPos
-        self.spriteOffsetSize = offsetSize
+        self.spriteOffsetPos:int = offsetPos
+        self.spriteOffsetSize:int = offsetSize
 
 
-        self.x = x
-        self.y = y
+        self.x:int = x
+        self.y:int = y
 
-        self.name = name
+        self.name:str = name
 
-        self.size_X = size[0]
-        self.size_Y = size[1]
+        self.size_X:int = size[0]
+        self.size_Y:int = size[1]
 
-        self.sprites = [pygame.transform.scale(pygame.image.load(self.spriteDir+r"\\"+elt).convert_alpha(), (self.size_X, self.size_Y)) for elt in os.listdir(self.spriteDir)]
+        self.sprites:list[pygame.Surface] = [pygame.transform.scale(pygame.image.load(self.spriteDir+r"\\"+elt).convert_alpha(), (self.size_X, self.size_Y)) for elt in os.listdir(self.spriteDir)]
 
-        self.firstSprite = 0
-        self.currentSprite = self.sprites[self.firstSprite]
+        self.firstSprite:int = 0
+        self.currentSprite:pygame.Surface = self.sprites[self.firstSprite]
 
-        self.active = True
-        self.finished = False
+        self.active:bool = True
+        self.finished:bool = False
 
-        self.loopable = loop
+        self.loopable:bool = loop
 
     def resetAnimation(self):
         self.currentSprite = self.sprites[self.firstSprite]

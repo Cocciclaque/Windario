@@ -1,7 +1,4 @@
 import pygame
-import win32api
-import win32con
-import win32gui
 import Scripts.SettingsAndLevelParser as SettingsAndLevelParser
 import Scripts.levelRenderer as levelRenderer
 import Scripts.windowrelative as CustomRenderWindowRelative
@@ -9,47 +6,43 @@ import Scripts.windowabsolute as CustomRenderWindowAbsolute
 import Scripts.player as PlayerCharacter
 import Scripts.animation as Animation
 import Scripts.level as CustomLevel
-import Scripts.transition as transition
 import Scripts.background as background
-import time
 pygame.init()
 
-clock = pygame.time.Clock()
-FPS = 60
+clock:pygame.time.Clock = pygame.time.Clock()
+FPS:int = 60
 clock.tick(FPS)
-dt = 0
+dt:float = 0
 
-height = 800
-width = 1000
+height:int = 800
+width:int = 1000
 
-config = SettingsAndLevelParser.Config(r"Data\config.dat", r"Data\elementAlias.dat")
-screen = pygame.display.set_mode((1000, 800), display=0) # For borderless, use pygame.NOFRAME
-# pygame.display.toggle_fullscreen()
-
+config:SettingsAndLevelParser.Config = SettingsAndLevelParser.Config(r"Data\config.dat", r"Data\elementAlias.dat")
+screen:pygame.Surface = pygame.display.set_mode((1000, 800), display=0)
 
 
-done = False
-transparent = (255, 0, 128)# Transparency color
-dark_red = (139, 0, 0)
-sky = "#02bdf4"
 
-bg = background.Background(screen, sky, r"Textures\TextureData\Clouds", (width, height))
+done:bool = False
+dark_red:pygame.Color = (139, 0, 0)
+sky:pygame.Color = "#02bdf4"
+
+bg:background.Background = background.Background(screen, sky, r"Textures\TextureData\Clouds", (width, height))
 
 
-level1 = SettingsAndLevelParser.Level(r"Levels\level1.dat").map
-level2 = SettingsAndLevelParser.Level(r"Levels\level2.dat").map
-LevelDisplay = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
+level1:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level1.dat").map
+level2:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level2.dat").map
+LevelDisplay:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]), 
                                            level1, config.alias, r"Textures\TextureData")
 
-LevelDisplay2 = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
+LevelDisplay2:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
                                             int(config.config["size_X"]), int(config.config["size_Y"]), 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]),
                                            level2, config.alias, r"Textures\TextureData")
 
 
-player = PlayerCharacter.Player(screen, int(config.config["tilesize"]), 200, 500, float(config.config["gravity"]), 500, 63, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
+player:PlayerCharacter.Player = PlayerCharacter.Player(screen, int(config.config["tilesize"]), 200, 500, float(config.config["gravity"]), 500, 63, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
 
 windows:list[CustomRenderWindowAbsolute.WindowAbsolute] = []
 
@@ -59,24 +52,17 @@ levelTwo:CustomLevel.Level = CustomLevel.Level(screen, level2, (4, 12), (10, 12)
 
 levels:list[CustomLevel.Level] = [levelZero, levelOne, levelTwo]
 
-activeLevel = 0
+activeLevel:int = 0
 
-tilesize = levels[activeLevel].renderer.tilesize
+tilesize:int = levels[activeLevel].renderer.tilesize
 levelOne.addEnemy(10*tilesize, 13*tilesize-20, 5, 150)
-
-# Create layered window
-hwnd = pygame.display.get_wm_info()["window"]
-win32gui.SetWindowLong(hwnd, win32con.GWL_EXSTYLE,
-                       win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE) | win32con.WS_EX_LAYERED)
-# Set window transparency color
-win32gui.SetLayeredWindowAttributes(hwnd, win32api.RGB(*transparent), 0, win32con.LWA_COLORKEY)
 
 def DoPlayerMovementAndKeys(keys):
     global done
     global activeLevel
-    anim = player.currentAnimation
-    x = player.x
-    currentColliders = player.doCollisions(collisions)[1]
+    anim:Animation.Animation = player.currentAnimation
+    x:int = player.x
+    currentColliders:list[int] = player.doCollisions(collisions)[1]
     if keys["left"] and player.grounded == True:
         player.x -= player.speed * dt
         checkHorizontalCollisions(x, currentColliders)
@@ -170,21 +156,21 @@ def checkHorizontalCollisions(x, currentColliders):
 
 
 def transition():
-    transitionDone = False
-    font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
-    win_abs  = font.render("You won !", True, (255, 255, 255))
+    transitionDone:bool = False
+    font:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
+    win_abs:pygame.Surface = font.render("You won !", True, (255, 255, 255))
     
-    smallfont = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 20)
+    smallfont:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 20)
 
-    button_surface = pygame.Surface((200, 75))
-    button_game = pygame.Rect(width/2-100, height/4+150, 200, 75)
-    button_game_text = smallfont.render("Next Level", True, (255, 255, 255))
-    button_game_text_rect = button_game_text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
+    button_surface:pygame.surface = pygame.Surface((200, 75))
+    button_game:pygame.Rect = pygame.Rect(width/2-100, height/4+150, 200, 75)
+    button_game_text:pygame.Surface = smallfont.render("Next Level", True, (255, 255, 255))
+    button_game_text_rect:pygame.Rect = button_game_text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
 
-    button_surface_quit = pygame.Surface((200, 75))
-    button_quit = pygame.Rect(width/2-100, height/4+400, 200, 75)
-    button_quit_text = smallfont.render("Exit game", True, (255, 255, 255))
-    button_quit_text_rect = button_game_text.get_rect(center=(button_surface_quit.get_width()/2, button_surface_quit.get_height()/2))
+    button_surface_quit:pygame.Surface = pygame.Surface((200, 75))
+    button_quit:pygame.Rect = pygame.Rect(width/2-100, height/4+400, 200, 75)
+    button_quit_text:pygame.Surface = smallfont.render("Exit game", True, (255, 255, 255))
+    button_quit_text_rect:pygame.Rect = button_game_text.get_rect(center=(button_surface_quit.get_width()/2, button_surface_quit.get_height()/2))
     
     button_surface.blit(button_game_text, button_game_text_rect)
     button_surface_quit.blit(button_quit_text, button_quit_text_rect)
@@ -212,7 +198,8 @@ def nextLevel():
     global activeLevel
     global tilesize
     global windows
-
+    global copy
+    player.lookRight()
     levels[activeLevel].naw = levels[activeLevel].startingnaw
     levels[activeLevel].nrw = levels[activeLevel].startingnrw
 
@@ -232,21 +219,21 @@ def nextLevel():
 tilesize = levels[activeLevel].renderer.tilesize
 
 def menu():
-    menuDone = False
-    font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
-    win_abs  = font.render("Windario", True, (255, 255, 255))
+    menuDone:bool = False
+    font:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
+    win_abs:pygame.Surface = font.render("Windario", True, (255, 255, 255))
     
-    smallfont = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 20)
+    smallfont:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 20)
 
-    button_surface = pygame.Surface((200, 75))
-    button_game = pygame.Rect(width/2-100, height/4+150, 200, 75)
-    button_game_text = smallfont.render("Play game", True, (255, 255, 255))
-    button_game_text_rect = button_game_text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
+    button_surface:pygame.Surface = pygame.Surface((200, 75))
+    button_game:pygame.Rect = pygame.Rect(width/2-100, height/4+150, 200, 75)
+    button_game_text:pygame.Surface = smallfont.render("Play game", True, (255, 255, 255))
+    button_game_text_rect:pygame.Rect = button_game_text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
 
-    button_surface_quit = pygame.Surface((200, 75))
-    button_quit = pygame.Rect(width/2-100, height/4+400, 200, 75)
-    button_quit_text = smallfont.render("Quit", True, (255, 255, 255))
-    button_quit_text_rect = button_game_text.get_rect(center=(button_surface_quit.get_width()/2, button_surface_quit.get_height()/2))
+    button_surface_quit:pygame.Surface = pygame.Surface((200, 75))
+    button_quit:pygame.Rect = pygame.Rect(width/2-100, height/4+400, 200, 75)
+    button_quit_text:pygame.Surface = smallfont.render("Quit", True, (255, 255, 255))
+    button_quit_text_rect:pygame.Rect = button_game_text.get_rect(center=(button_surface_quit.get_width()/2, button_surface_quit.get_height()/2))
     
     button_surface.blit(button_game_text, button_game_text_rect)
     button_surface_quit.blit(button_quit_text, button_quit_text_rect)
@@ -270,21 +257,21 @@ def menu():
         pygame.display.flip()
             
 def restart():
-    restartDone = False
-    font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
-    win_abs  = font.render("You died !", True, (255, 255, 255))
+    restartDone:bool = False
+    font:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 45)
+    win_abs:pygame.Surface = font.render("You died !", True, (255, 255, 255))
     
-    smallfont = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 20)
+    smallfont:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 20)
 
-    button_surface = pygame.Surface((200, 75))
-    button_game = pygame.Rect(width/2-100, height/4+150, 200, 75)
-    button_game_text = smallfont.render("Try Again ?", True, (255, 255, 255))
-    button_game_text_rect = button_game_text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
+    button_surface:pygame.Surface = pygame.Surface((200, 75))
+    button_game:pygame.Rect = pygame.Rect(width/2-100, height/4+150, 200, 75)
+    button_game_text:pygame.Surface = smallfont.render("Try Again ?", True, (255, 255, 255))
+    button_game_text_rect:pygame.Rect = button_game_text.get_rect(center=(button_surface.get_width()/2, button_surface.get_height()/2))
 
-    button_surface_quit = pygame.Surface((200, 75))
-    button_quit = pygame.Rect(width/2-100, height/4+400, 200, 75)
-    button_quit_text = smallfont.render("Give up", True, (255, 255, 255))
-    button_quit_text_rect = button_game_text.get_rect(center=(button_surface_quit.get_width()/2, button_surface_quit.get_height()/2))
+    button_surface_quit:pygame.Surface = pygame.Surface((200, 75))
+    button_quit:pygame.Rect = pygame.Rect(width/2-100, height/4+400, 200, 75)
+    button_quit_text:pygame.Surface = smallfont.render("Give up", True, (255, 255, 255))
+    button_quit_text_rect:pygame.Rect = button_game_text.get_rect(center=(button_surface_quit.get_width()/2, button_surface_quit.get_height()/2))
     
     button_surface.blit(button_game_text, button_game_text_rect)
     button_surface_quit.blit(button_quit_text, button_quit_text_rect)
@@ -312,15 +299,15 @@ menu()
 player.x = levels[activeLevel].startX*tilesize
 player.y = levels[activeLevel].startY*tilesize
 player.vY = 0
-copy = False
-copyfont = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 30)
-win_abs  = copyfont.render("You are in copy mode.", True, (255, 255, 255))
-mousepos = [500, 500]
-mouseClicked = False
-selectedTile = []
-selectedTile2 = []
-hoveredTile = []
-displacementMode = False
+copy:bool = False
+copyfont:pygame.font.Font = pygame.font.Font(r"Textures\TextureData\fonts\PixelOperator8-Bold.ttf", 30)
+win_abs:pygame.Surface = copyfont.render("You are in copy mode.", True, (255, 255, 255))
+mousepos:list[int] = [500, 500]
+mouseClicked:bool = False
+selectedTile:list[int] = []
+selectedTile2:list[int] = []
+hoveredTile:list[int] = []
+displacementMode:bool = False
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -362,8 +349,8 @@ while not done:
 
         screen.blit(win_abs, (100, 10))
         
-        mouseX = mousepos[0]
-        mouseY = mousepos[1]
+        mouseX:int = mousepos[0]
+        mouseY:int = mousepos[1]
         hoveredTile = [round((mouseX-25)/tilesize), round((mouseY-25)/tilesize)]
         if displacementMode == False:
             if selectedTile != [] and selectedTile2 == []:

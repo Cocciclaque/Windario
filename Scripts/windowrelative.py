@@ -4,26 +4,26 @@ import Scripts.levelRenderer as levelRenderer
 class WindowRelative:
 
     def __init__(self, position:tuple[int, int], dimension:tuple[int, int], tilesize:int, level:levelRenderer.LevelRenderer, screen:pygame.Surface, offset:tuple[int, int]= (0, 0)):
-        self.posX = position[0]
-        self.posY = position[1]
+        self.posX:int = position[0]
+        self.posY:int = position[1]
 
-        self.offX = self.posX
-        self.offY = self.posY
+        self.offX:int = self.posX
+        self.offY:int = self.posY
 
-        self.sizeX = dimension[0]
-        self.sizeY = dimension[1]
+        self.sizeX:int = dimension[0]
+        self.sizeY:int = dimension[1]
 
-        self.dX = dimension[0]*tilesize
-        self.dY = dimension[1]*tilesize
+        self.dX:int = dimension[0]*tilesize
+        self.dY:int = dimension[1]*tilesize
 
-        self.tilesize = tilesize
+        self.tilesize:int = tilesize
 
-        self.screen = screen
+        self.screen:pygame.Surface = screen
 
         self.surface:pygame.display = screen.subsurface((self.posX*self.tilesize, self.posY*self.tilesize, self.dX, self.dY))
         self.renderer = levelRenderer.LevelRenderer(self.surface, self.tilesize, level.size_X, level.size_Y, level.dX, level.dY, level.level, level.alias, r"Textures\TextureData")
 
-        self.collisions = []
+        self.collisions:list[pygame.Rect] = []
 
     def drawWindow(self):
         self.renderer.screen = self.surface

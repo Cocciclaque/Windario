@@ -4,44 +4,41 @@ import time
 class Player:
 
     def __init__(self, screen:pygame.display, tilesize:int, pos_X:int, pos_Y:int, gravity:float, speed:int, jumpforce:float, controls:str, spriteDir:str, clock:pygame.time.Clock, fps:int):
-        self.x = pos_X
-        self.y = pos_Y
+        self.x:int = pos_X
+        self.y:int = pos_Y
         
-        self.jumpForce = jumpforce
+        self.jumpForce:float = jumpforce
 
-        self.tilesize = tilesize
+        self.tilesize:int = tilesize
 
-        self.tileX = round(self.x/self.tilesize)
-        self.tileY = round(self.y/self.tilesize)
+        self.g:float = gravity
+        self.speed:int = speed
 
-        self.g = gravity
-        self.speed = speed
-
-        self.controls = controls
+        self.controls:str = controls
         
-        self.spriteDir = spriteDir
+        self.spriteDir:str = spriteDir
 
-        self.screen = screen
+        self.screen:pygame.Surface = screen
 
-        self.clock = clock
+        self.clock:pygame.time.Clock = clock
 
-        self.fps = fps
+        self.fps:int = fps
 
-        self.beatLevel = False
+        self.beatLevel:bool = False
 
-        self.grounded = False
+        self.grounded:bool = False
 
-        self.idle = Animation(self.screen, self.spriteDir+"\\"+r"\idle", self.x, self.y, 0.15, self.clock, self.fps, (100, 100), True, "idle", 25, 75)
-        self.running = Animation(self.screen, self.spriteDir+"\\"+r"running", self.x, self.y, 0.05, self.clock, self.fps, (100, 100), True, "running", 25, 75)
-        self.rolling = Animation(self.screen, self.spriteDir+"\\"+r"rolling", self.x, self.y, 0.025, self.clock, self.fps, (100, 100), False, 25, 75)
-        self.hit= Animation(self.screen, self.spriteDir+"\\"+r"hit", self.x, self.y, 0.025, self.clock, self.fps, (100, 100), False, 25, 75)
-        self.death = Animation(self.screen, self.spriteDir+"\\"+r"death", self.x, self.y, 0.025, self.clock, self.fps, (100, 100), False, 25, 75)
-        self.falling = Animation(self.screen, self.spriteDir+"\\"+r"falling", self.x, self.y, 0.0175, self.clock, self.fps, (100, 100), False, "falling", 25, 75)
+        self.idle:Animation = Animation(self.screen, self.spriteDir+"\\"+r"\idle", self.x, self.y, 0.15, self.clock, self.fps, (100, 100), True, "idle", 25, 75)
+        self.running:Animation = Animation(self.screen, self.spriteDir+"\\"+r"running", self.x, self.y, 0.05, self.clock, self.fps, (100, 100), True, "running", 25, 75)
+        self.rolling:Animation = Animation(self.screen, self.spriteDir+"\\"+r"rolling", self.x, self.y, 0.025, self.clock, self.fps, (100, 100), False, 25, 75)
+        self.hit:Animation = Animation(self.screen, self.spriteDir+"\\"+r"hit", self.x, self.y, 0.025, self.clock, self.fps, (100, 100), False, 25, 75)
+        self.death:Animation = Animation(self.screen, self.spriteDir+"\\"+r"death", self.x, self.y, 0.025, self.clock, self.fps, (100, 100), False, 25, 75)
+        self.falling:Animation = Animation(self.screen, self.spriteDir+"\\"+r"falling", self.x, self.y, 0.0175, self.clock, self.fps, (100, 100), False, "falling", 25, 75)
         self.currentAnimation:Animation = self.idle
 
-        self.animations = [self.idle, self.running, self.rolling, self.hit, self.death, self.falling]
+        self.animations:list[Animation] = [self.idle, self.running, self.rolling, self.hit, self.death, self.falling]
 
-        self.vY = 0
+        self.vY:float = 0
 
     def chooseAnimation(self, animation):
         # if animation == self.currentAnimation or (self.currentAnimation == "hit" and self.currentAnimation.finished == False):

@@ -3,28 +3,28 @@ import Scripts.animation as animation
 class LevelRenderer:
 
     def __init__(self, screen:pygame.Surface, tilesize:int, size_X:int, size_Y:int, dimension_X:int, dimension_Y:int, level:list[list[int]], alias:list[str], finishdir:str):
-        self.screen = screen
-        self.size_X = size_X
-        self.size_Y = size_Y
-        self.dX = dimension_X
-        self.dY = dimension_Y
-        self.level = level
+        self.screen:pygame.Surface = screen
+        self.size_X:int = size_X
+        self.size_Y:int = size_Y
+        self.dX:int = dimension_X
+        self.dY:int = dimension_Y
+        self.level:list[list[int]] = level
 
-        self.alias = alias
+        self.alias:list[str] = alias
 
-        self.endX = 0
-        self.endY = 0
+        self.endX:int = 0
+        self.endY:int = 0
 
-        self.finishImage = pygame.transform.scale(pygame.image.load(r"Textures\flag.png").convert_alpha(), (50, 50))
+        self.finishImage:pygame.Surface = pygame.transform.scale(pygame.image.load(r"Textures\flag.png").convert_alpha(), (50, 50))
 
-        self.tilesize = tilesize
+        self.tilesize:int = tilesize
 
-        self.offset_X = 0
-        self.offset_Y = 0
+        self.offset_X:int = 0
+        self.offset_Y:int = 0
 
-        self.tilesize = self.dY/self.size_Y
+        self.tilesize:int = self.dY/self.size_Y
 
-        self.collisions = []
+        self.collisions:list[pygame.Rect] = []
 
     def renderFinish(self):
         self.screen.blit(self.finishImage, (self.endX * self.tilesize, self.endY * self.tilesize, 10, 10))
