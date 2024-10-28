@@ -10,6 +10,7 @@ import Scripts.player as PlayerCharacter
 import Scripts.animation as Animation
 import Scripts.level as CustomLevel
 import Scripts.transition as transition
+import Scripts.background as background
 import time
 pygame.init()
 
@@ -18,16 +19,21 @@ FPS = 60
 clock.tick(FPS)
 dt = 0
 
+height = 800
+width = 1000
+
 config = SettingsAndLevelParser.Config(r"Data\config.dat", r"Data\elementAlias.dat")
-screen = pygame.display.set_mode((0, 0), pygame.NOFRAME, display=0) # For borderless, use pygame.NOFRAME
+screen = pygame.display.set_mode((1000, 800), display=0) # For borderless, use pygame.NOFRAME
 # pygame.display.toggle_fullscreen()
 
 
-pygame.display.toggle_fullscreen()
 
 done = False
 transparent = (255, 0, 128)# Transparency color
 dark_red = (139, 0, 0)
+sky = "#02bdf4"
+
+bg = background.Background(screen, sky, r"Textures\TextureData\Clouds", (width, height))
 
 
 level1 = SettingsAndLevelParser.Level(r"Levels\level1.dat").map
@@ -79,6 +85,7 @@ def DoPlayerMovementAndKeys(keys):
             elt.x = player.x
             elt.y = player.y
         player.currentAnimation = player.running
+        
     if keys["left"] and player.grounded == False:
         player.x -= player.speed * dt
         checkHorizontalCollisions(x, currentColliders)
@@ -142,6 +149,9 @@ def DoPlayerMovementAndKeys(keys):
         player.falling.lookdir = player.currentAnimation.lookdir
         player.currentAnimation = player.falling
 
+    if player.x <= 0:
+            player.x += player.speed * dt
+
     if keys["switch"]:
         nextLevel()
 
@@ -196,7 +206,7 @@ while not done:
     collisions = []
 
     
-    screen.fill(transparent)
+    bg.renderBackground()
     # window2.fill("darkblue")
     # window2.drawWindow()
     # window.fill("lightblue")
