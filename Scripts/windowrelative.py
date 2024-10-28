@@ -29,6 +29,11 @@ class WindowRelative:
         self.renderer.screen = self.surface
         self.collisions = self.renderer.renderGroundWindowRelative(self.posX, self.posY, self.sizeX, self.sizeY)
         
+    def update(self):
+            try:
+                self.surface = self.screen.subsurface((self.posX*self.tilesize, self.posY*self.tilesize, self.dX, self.dY))
+            except:
+                pass
 
     def fill(self, color):
         self.surface.fill(color)

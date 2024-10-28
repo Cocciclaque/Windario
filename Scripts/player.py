@@ -73,8 +73,7 @@ class Player:
                 self.vY = 0
                 self.grounded = True
             if col[0] and self.vY < 0:
-                self.vY = 4
-                self.y += 5
+                self.vY = 20
                 self.addGravity(deltaTime) 
     
     def jump(self, deltaTime):
@@ -104,7 +103,7 @@ class Player:
         self.currentAnimation.y = self.y
 
 
-    def keys(self, deltaTime):
+    def keys(self):
         # self.addGravity(deltaTime)
 
         pressed_keys = pygame.key.get_pressed()
@@ -146,6 +145,11 @@ class Player:
             keysToReturn["switch"] = True
         else:
             keysToReturn["switch"] = False
+
+        if pressed_keys[int(self.controls["copy"])]:
+            keysToReturn["copy"] = True
+        else:
+            keysToReturn["copy"] = False
 
         return keysToReturn
 

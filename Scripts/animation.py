@@ -66,7 +66,7 @@ class Animation:
         
             self.currentSprite = self.sprites[self.firstSprite + self.value]
             
-        if self.spriteDir != r"Textures\TextureData\coin":
+        if self.spriteDir != r"Textures\TextureData\coin" and self.spriteDir != r"Textures\TextureData\slime_purple":
             self.tick()
 
     def tick(self):

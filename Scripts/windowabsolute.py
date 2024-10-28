@@ -7,8 +7,8 @@ class WindowAbsolute:
         self.posX = position[0]
         self.posY = position[1]
 
-        self.offX = self.posX
-        self.offY = self.posY
+        self.offX = 0
+        self.offY = 0
 
         self.sizeX = dimension[0]
         self.sizeY = dimension[1]
@@ -20,13 +20,15 @@ class WindowAbsolute:
         self.screen = screen
 
         self.surface:pygame.display = screen.subsurface((self.posX*self.tilesize, self.posY*self.tilesize, self.dX, self.dY))
-        self.renderer = levelRenderer.LevelRenderer(self.surface, self.tilesize, level.size_X, level.size_Y, level.dX, level.dY, level.level, level.alias)
+        self.renderer = levelRenderer.LevelRenderer(self.surface, self.tilesize, level.size_X, level.size_Y, level.dX, level.dY, level.level, level.alias, r"Textures\TextureData")
+
 
         self.collisions = []
 
     def drawWindow(self):
         self.renderer.screen = self.surface
-        self.collisions = self.renderer.renderGroundWindowAbsolute(self.posX, self.posY, self.sizeX, self.sizeY)
+        self.collisions = self.renderer.renderGroundWindowAbsolute(self.posX, self.posY, self.offX, self.offY, self.sizeX, self.sizeY)
+        return self.collisions
 
     def fill(self, color):
         self.surface.fill(color)
@@ -35,7 +37,11 @@ class WindowAbsolute:
         self.posX = posX
         self.posY = posY
 
-
+    def update(self):
+            try:
+                self.surface = self.screen.subsurface(((self.posX+self.offX)*self.tilesize, (self.offY+self.posY)*self.tilesize, self.dX, self.dY))
+            except:
+                pass
     def moveLeft(self):
         self.offX -= self.tilesize
         self.posX -= self.tilesize

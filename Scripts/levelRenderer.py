@@ -2,7 +2,7 @@ import pygame
 import Scripts.animation as animation
 class LevelRenderer:
 
-    def __init__(self, screen:pygame.display, tilesize:int, size_X:int, size_Y:int, dimension_X:int, dimension_Y:int, level:list[list[int]], alias:list[str], finishdir:str):
+    def __init__(self, screen:pygame.Surface, tilesize:int, size_X:int, size_Y:int, dimension_X:int, dimension_Y:int, level:list[list[int]], alias:list[str], finishdir:str):
         self.screen = screen
         self.size_X = size_X
         self.size_Y = size_Y
@@ -15,9 +15,7 @@ class LevelRenderer:
         self.endX = 0
         self.endY = 0
 
-        self.finishdir = finishdir
-        self.finish:animation.Animation = 0
-
+        self.finishImage = pygame.transform.scale(pygame.image.load(r"Textures\flag.png").convert_alpha(), (50, 50))
 
         self.tilesize = tilesize
 
@@ -29,7 +27,7 @@ class LevelRenderer:
         self.collisions = []
 
     def renderFinish(self):
-        self.finish.animate()
+        self.screen.blit(self.finishImage, (self.endX * self.tilesize, self.endY * self.tilesize, 10, 10))
 
     def renderGround(self):
 
@@ -65,18 +63,19 @@ class LevelRenderer:
 
         return collisions
     
-    def renderGroundWindowAbsolute(self, offsetX, offsetY, sizeX, sizeY):
-        
+    def renderGroundWindowAbsolute(self, initialposX, initialposY, offsetX, offsetY, sizeX, sizeY):
+
+
         collisions = []
 
-        for X in range(int(offsetX), int(offsetX)+sizeX):
-            for Y in range(int(offsetY), int(offsetY)+sizeY):
+
+        for X in range(int(initialposX), int(initialposX)+sizeX):
+            for Y in range(int(initialposY), int(initialposY)+sizeY):
                 if self.level[Y][X] != "0":
-                    collisions.append(pygame.Rect(X*self.tilesize, Y*self.tilesize, self.tilesize, self.tilesize))
+                    collisions.append(pygame.Rect(((X+offsetX)*self.tilesize), ((Y+offsetY)*self.tilesize), self.tilesize, self.tilesize))
                     sprite = pygame.image.load(self.alias[self.level[Y][X]]).convert_alpha()
 
                     spriteblit = pygame.transform.scale(sprite, (self.tilesize, self.tilesize))
-                    
-                    self.screen.blit(spriteblit, ((X*self.tilesize), (Y*self.tilesize)))
+                    self.screen.blit(spriteblit, (((X-initialposX)*self.tilesize), ((Y-initialposY)*self.tilesize)))
         return collisions
 
