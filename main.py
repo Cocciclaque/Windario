@@ -31,6 +31,11 @@ bg:background.Background = background.Background(screen, sky, r"Textures\Texture
 
 level1:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level1.dat").map
 level2:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level2.dat").map
+level3:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level3.dat").map
+level4:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level4.dat").map
+level5:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level5.dat").map
+level6:SettingsAndLevelParser.Level = SettingsAndLevelParser.Level(r"Levels\level6.dat").map
+
 LevelDisplay:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]), 
@@ -41,6 +46,25 @@ LevelDisplay2:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, 
                                            int(config.config["screen_X"]), int(config.config["screen_Y"]),
                                            level2, config.alias, r"Textures\TextureData")
 
+LevelDisplay3:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
+                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
+                                           int(config.config["screen_X"]), int(config.config["screen_Y"]),
+                                           level3, config.alias, r"Textures\TextureData")
+
+LevelDisplay4:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
+                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
+                                           int(config.config["screen_X"]), int(config.config["screen_Y"]),
+                                           level4, config.alias, r"Textures\TextureData")
+
+LevelDisplay5:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
+                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
+                                           int(config.config["screen_X"]), int(config.config["screen_Y"]),
+                                           level5, config.alias, r"Textures\TextureData")
+
+LevelDisplay6:levelRenderer.LevelRenderer = levelRenderer.LevelRenderer(screen, int(config.config["tilesize"]),
+                                            int(config.config["size_X"]), int(config.config["size_Y"]), 
+                                           int(config.config["screen_X"]), int(config.config["screen_Y"]),
+                                           level6, config.alias, r"Textures\TextureData")
 
 player:PlayerCharacter.Player = PlayerCharacter.Player(screen, int(config.config["tilesize"]), 200, 500, float(config.config["gravity"]), 500, 63, config.parseConfig(r"Data\controls.dat"), r"Textures\TextureData\playerCharacter", clock, FPS)
 
@@ -53,17 +77,26 @@ levelOne:CustomLevel.Level = CustomLevel.Level(screen, level1, (4, 12), (17, 13)
 levelOne.displayNumWindows = False
 levelOne.addText(100, 50, "les ennemis sont très dangereux, esquivez-les !")
 levelTwo:CustomLevel.Level = CustomLevel.Level(screen, level2, (4, 12), (17, 13), 1, 1, LevelDisplay2, clock, config, FPS)
-
-levels:list[CustomLevel.Level] = [levelZero, levelOne, levelTwo]
+levelTwo.addText(100, 50, "Appuyez sur \"r\" pour copier un élément de la partie")
+levelThree:CustomLevel.Level = CustomLevel.Level(screen, level3, (4, 12), (17, 1), 4, 4, LevelDisplay3, clock, config, FPS)
+levelFour:CustomLevel.Level = CustomLevel.Level(screen, level4, (4, 12), (2, 1), 3, 3, LevelDisplay4, clock, config, FPS)
+levelFive:CustomLevel.Level = CustomLevel.Level(screen, level5, (2, 12.5), (18, 13), 1, 1, LevelDisplay5, clock, config, FPS)
+levelSix:CustomLevel.Level = CustomLevel.Level(screen, level5, (0, 12.5), (19, 13), 1, 1, LevelDisplay6, clock, config, FPS)
+levelSix.addText(100, 50, "Les blocs \"!\" sont impossible à copier !")
+levels:list[CustomLevel.Level] = [levelZero, levelOne, levelTwo, levelThree, levelFour, levelFive, levelSix]
 
 activeLevel:int = 0
 
 tilesize:int = levels[activeLevel].renderer.tilesize
 levelOne.addEnemy(10*tilesize, 13*tilesize-20, 5, 150)
+levelFive.addEnemy(10.5*tilesize, 13*tilesize-20, 10, 225)
+levelFive.addEnemy(12.5*tilesize, 13*tilesize-20, 10, 100)
+levelFive.addEnemy(8.5*tilesize, 13*tilesize-20, 10, 100)
 
 def DoPlayerMovementAndKeys(keys):
     global done
     global activeLevel
+    global copy
     anim:Animation.Animation = player.currentAnimation
     x:int = player.x
     currentColliders:list[int] = player.doCollisions(collisions)[1]
@@ -151,6 +184,9 @@ def DoPlayerMovementAndKeys(keys):
         player.x = levels[activeLevel].startX*tilesize
         player.y = levels[activeLevel].startY*tilesize
         player.vY = 0
+        levels[activeLevel].naw = levels[activeLevel].startingnaw
+        levels[activeLevel].nrw = levels[activeLevel].startingnrw
+        copy = False
 
     if keys["exit"]:
         done = True
@@ -162,6 +198,10 @@ def checkHorizontalCollisions(x, currentColliders):
                 player.x = x
         elif player.doCollisions(collisions)[0] == True and player.grounded == False:
                 player.x = x
+
+        if player.doWallCollisions(collisions)[0] == True and player.grounded == True:
+            player.x = x
+        
     except:
         pass
 
@@ -424,6 +464,9 @@ while not done:
             player.x = levels[activeLevel].startX*tilesize
             player.y = levels[activeLevel].startY*tilesize
             player.vY = 0
+            levels[activeLevel].naw = levels[activeLevel].startingnaw
+            levels[activeLevel].nrw = levels[activeLevel].startingnrw
+            copy = False
 
         if(player.doCollisions([pygame.Rect(levels[activeLevel].endX*tilesize-10, levels[activeLevel].endY*tilesize, tilesize+20, tilesize)])[1]) != 0:
             nextLevel()

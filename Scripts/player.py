@@ -60,6 +60,12 @@ class Player:
             return (True, thing_to_test)
         return (False, 0)
     
+    def doWallCollisions(self, collisions):
+        thing_to_test = pygame.Rect(self.x+11, self.y+10, 27, 10).collidelistall(collisions)
+        if thing_to_test != []:
+            return (True, thing_to_test)
+        return (False, 0)
+    
     def update(self, deltaTime, collisions):
         if self.doCollisions(collisions)[0] == False:
             self.addGravity(deltaTime)

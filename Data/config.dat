@@ -2,5 +2,5 @@ size_X:30
 size_Y:16
 screen_X:800
 screen_Y:800
-gravity:9.82
+gravity:11
 tilesize:50

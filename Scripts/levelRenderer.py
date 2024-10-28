@@ -71,7 +71,7 @@ class LevelRenderer:
 
         for X in range(int(initialposX), int(initialposX)+sizeX):
             for Y in range(int(initialposY), int(initialposY)+sizeY):
-                if self.level[Y][X] != "0":
+                if self.level[Y][X] != "0" and self.level[Y][X] != "N":
                     collisions.append(pygame.Rect(((X+offsetX)*self.tilesize), ((Y+offsetY)*self.tilesize), self.tilesize, self.tilesize))
                     sprite = pygame.image.load(self.alias[self.level[Y][X]]).convert_alpha()
 
